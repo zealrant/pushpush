@@ -14,6 +14,11 @@ public:
     
     // a selector callback
     void menuCloseCallback(CCObject* pSender);
+    void onStartTimer();
+    void onStopTimer();
+    void LogicTick(float f);
+    void BlockTick(float f);
+
     
     // implement the "static node()" method manually
     CREATE_FUNC(HelloWorld);
