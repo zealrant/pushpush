@@ -1,13 +1,6 @@
 #include "HelloWorldScene.h"
-#include "pushpush/Game.hpp"
 
 USING_NS_CC;
-
-int x = 0;
-int y = 100;
-CCSprite* pSpriteTarget;
-
-pushpush::Game game;
 
 CCScene* HelloWorld::scene()
 {
@@ -79,36 +72,8 @@ bool HelloWorld::init()
 
     // add the sprite as a child to this layer
     this->addChild(pSprite, 0);
-
-    game.init(this);
-    onStartTimer();
-
+    
     return true;
-}
-
-void HelloWorld::onStartTimer()
-{
-    CCLOG("%s", __func__);
-    this->schedule(schedule_selector(HelloWorld::LogicTick), 0.0f);
-    this->schedule(schedule_selector(HelloWorld::BlockTick), 1.0f);
-}
-
-void HelloWorld::onStopTimer()
-{
-    CCLOG("%s", __func__);
-    this->unschedule(schedule_selector(HelloWorld::LogicTick));
-    this->unschedule(schedule_selector(HelloWorld::BlockTick));
-}
-
-void HelloWorld::LogicTick(float f)
-{
-    // CCLOG("%s", __func__);
-}
-
-void HelloWorld::BlockTick(float f)
-{
-    game.heartbeat();
-    CCLOG("%s", __func__);
 }
 
 
