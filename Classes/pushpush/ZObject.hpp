@@ -10,19 +10,17 @@ namespace pushpush {
 
 class ZBall : public Ball, public ZSprite {
   private:
-    const float MoveSpeed;
-    const int Magnification;
+    static const float MoveSpeed;
+    static const int Magnification;
     inline CCPoint getCurrentPoint() {
         return ccp(p.x * Magnification, p.y * Magnification);
     }
   public:
-    ZBall(CCLayer* l) : Ball(), ZSprite(l, "Target.png"), Magnification(30),
-                        MoveSpeed(0.5) {
+    ZBall(CCLayer* l) : Ball(), ZSprite(l, "Target.png") {
         sprite->setPosition(getCurrentPoint());
     }
 
-    ZBall(CCLayer* l, int x, int y) : Ball(x, y), ZSprite(l, "Target.png"),
-                                      Magnification(30), MoveSpeed(0.5) {
+    ZBall(CCLayer* l, int x, int y) : Ball(x, y), ZSprite(l, "Target.png") {
         sprite->setPosition(getCurrentPoint());
     }
 
@@ -37,6 +35,9 @@ class ZBall : public Ball, public ZSprite {
         return rtn;
     }
 };
+
+const float ZBall::MoveSpeed = 0.5;
+const int ZBall::Magnification = 30;
 
 };
 

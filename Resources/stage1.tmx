@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="orthogonal" width="20" height="10" tilewidth="32" tileheight="32">
+ <tileset firstgid="1" name="tmw_desert_spacing" tilewidth="32" tileheight="32" spacing="1" margin="1">
+  <image source="tmw_desert_spacing.png" width="265" height="199"/>
+ </tileset>
+ <tileset firstgid="49" name="metaset" tilewidth="32" tileheight="32" spacing="1" margin="1">
+  <image source="metaset.png" width="67" height="34"/>
+  <tile id="0">
+   <properties>
+    <property name="Wall" value="1"/>
+   </properties>
+  </tile>
+  <tile id="1">
+   <properties>
+    <property name="Items" value="1"/>
+   </properties>
+  </tile>
+ </tileset>
+ <layer name="Background" width="20" height="10">
+  <data encoding="base64" compression="zlib">
+   eJyTY2BgkBvimBGImaCYmQrmcQIxFxRz09g8ESAWJdE8QSAWgmJhNDkZIJYlM/yY0diU+pcbjU2ueTD/CqOx6ZG2AA2XFLM=
+  </data>
+ </layer>
+ <layer name="WallLayer" width="20" height="10" opacity="0.5">
+  <data encoding="base64" compression="zlib">
+   eJxjYBj6wBANDyXzyLGD1uZR6u/Bbh4pAAB2QwdH
+  </data>
+ </layer>
+ <objectgroup name="Houses" width="20" height="10">
+  <object gid="46" x="480" y="224"/>
+  <object gid="46" x="512" y="224"/>
+  <object gid="46" x="544" y="224"/>
+ </objectgroup>
+ <objectgroup name="Balls" width="20" height="10">
+  <object gid="31" x="512" y="128"/>
+  <object gid="31" x="544" y="128"/>
+  <object gid="31" x="480" y="128"/>
+ </objectgroup>
+ <objectgroup name="SpawnPoint" width="20" height="10">
+  <object name="SpawnPoint" x="128" y="192" width="32" height="32"/>
+ </objectgroup>
+</map>

@@ -2,26 +2,30 @@
 #define __PUSHPUSH_GAME_HPP__
 
 #include "ZObjectFactory.hpp"
+#include "ZLevelFactory.hpp"
 
 namespace pushpush {
 
 class Game {
     ObjectFactory *objFactory;
-    Ball* b;
+    LevelFactory *levelFactory;
+    Ball* ball;
+    Level* level;
   public:
     Game() {
     }
 
     void init(CCLayer* l) {
-        // TODO. 레벨 객체에서 처리해야 함
+        levelFactory = new ZLevelFactory(l);
+        level = levelFactory->createLevel(0);
+
         objFactory = new ZObjectFactory(l);
-        b = objFactory->createBall();
-        srand(time(NULL));
+        ball = objFactory->createBall();
     }
 
     void heartbeat() {
         int d = rand() % 4;
-        b->move((DIRECT)d);
+        ball->move((DIRECT)d);
     }
 };
 

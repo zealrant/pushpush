@@ -9,17 +9,20 @@ USING_NS_CC;
 namespace pushpush {
 
 class ZObjectFactory : public ObjectFactory {
-    const int InitialX;
-    const int InitialY;
+    static const int InitialX;
+    static const int InitialY;
     CCLayer* layer;
   public:
-    ZObjectFactory(CCLayer* l) : layer(l), InitialX(8), InitialY(8) {
+    ZObjectFactory(CCLayer* l) : layer(l) {
     }
 
     virtual Ball* createBall() {
         return new ZBall(layer, InitialX, InitialY);
     }
 };
+
+const int ZObjectFactory::InitialX = 8;
+const int ZObjectFactory::InitialY = 8;
 
 };
 

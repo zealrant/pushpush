@@ -5,9 +5,9 @@ USING_NS_CC;
 
 int x = 0;
 int y = 100;
-CCSprite* pSpriteTarget;
 
 pushpush::Game game;
+
 
 CCScene* HelloWorld::scene()
 {
@@ -68,17 +68,12 @@ bool HelloWorld::init()
     pLabel->setPosition(ccp(origin.x + visibleSize.width/2,
                             origin.y + visibleSize.height - pLabel->getContentSize().height));
 
+
+    // CCTMXTiledMap* map = CCTMXTiledMap::create("stage1.tmx");
+    // this->addChild(map, 0, 100);
+
     // add the label as a child to this layer
-    this->addChild(pLabel, 1);
-
-    // add "HelloWorld" splash screen"
-    CCSprite* pSprite = CCSprite::create("HelloWorld.png");
-
-    // position the sprite on the center of the screen
-    pSprite->setPosition(ccp(visibleSize.width/2 + origin.x, visibleSize.height/2 + origin.y));
-
-    // add the sprite as a child to this layer
-    this->addChild(pSprite, 0);
+    // this->addChild(pLabel, 1);
 
     game.init(this);
     onStartTimer();
