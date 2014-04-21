@@ -10,6 +10,9 @@ namespace pushpush {
 class ZLevelFactory : public LevelFactory {
     CCLayer* layer;
     static const int TILE_SIZE;
+    static const int TILE_WALL;
+    static const int TILE_MOVABLE;
+    static const int TILE_BACKGROUND;
     static const char* stageFileNames[];
 
   private:
@@ -45,11 +48,28 @@ class ZLevelFactory : public LevelFactory {
         buildPoints(map, "SpawnPoint", &builder, &LevelBuilder::setHeroPos);
         buildPoints(map, "Balls", &builder, &LevelBuilder::addBall);
         buildPoints(map, "Houses", &builder, &LevelBuilder::addHouse);
-        return NULL;
+
+        CCTMXLayer* walls = map->layerNamed("WallLayer");
+        builder.setTiles(walls->getTiles(), [](int tileValue) {
+                Tile* t;
+                if(tileValue == TILE_BACKGROUND) {
+                    t = new TileBackground();
+                } else if(tileValue == TILE_WALL) {
+                    t = new TileWall();
+                } else if(tileValue == TILE_MOVABLE) {
+                    t = new TileMovable();
+                }
+                return t;
+            });
+        Level *level = builder.build();
+        return level;
     }
 };
 
 const int ZLevelFactory::TILE_SIZE = 33;
+const int ZLevelFactory::TILE_BACKGROUND = 0;
+const int ZLevelFactory::TILE_WALL = 49;
+const int ZLevelFactory::TILE_MOVABLE = 50;
 const char* ZLevelFactory::stageFileNames[] = {"stage1.tmx", "stage2.tmx"};
 
 };

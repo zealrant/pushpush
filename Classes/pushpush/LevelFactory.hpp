@@ -2,17 +2,18 @@
 #define __LEVEL_FACTORY_HPP__
 
 #include <vector>
+#include <functional>
 #include "Level.hpp"
 
 namespace pushpush {
 
 class LevelBuilder {
   private:
-    Point size;
+    Size size;
     Point posStart;
     std::vector<Point*> houses;
     std::vector<Point*> balls;
-
+    std::vector<Tile*> tiles;
   public:
     virtual ~LevelBuilder() {
         // std::for_each(houses.begin(), houses.end(),
@@ -20,12 +21,14 @@ class LevelBuilder {
     }
 
     LevelBuilder* setSize(int width, int height) {
-        size.x = width;
-        size.y = height;
+        size.width = width;
+        size.height = height;
         return this;
     }
 
     LevelBuilder* setHeroPos(int x, int y) {
+        posStart.x = x;
+        posStart.y = y;
         return this;
     }
 
@@ -36,6 +39,18 @@ class LevelBuilder {
 
     LevelBuilder* addHouse(int x, int y) {
         houses.push_back(new Point(x, y));
+        return this;
+    }
+
+    LevelBuilder* setTiles(unsigned int* layerValues,
+                           Tile* (*tileFactory)(int)) {
+        for(size_t i = 0; i < size.height; i++) {
+            for(size_t j = 0; j < size.width; j++) {
+                int value = layerValues[i * size.width + j];
+                Tile* t = tileFactory(value);
+                tiles.push_back(t);
+            }
+        }
         return this;
     }
 

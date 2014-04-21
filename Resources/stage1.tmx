@@ -21,7 +21,7 @@
    eJyTY2BgkBvimBGImaCYmQrmcQIxFxRz09g8ESAWJdE8QSAWgmJhNDkZIJYlM/yY0diU+pcbjU2ueTD/CqOx6ZG2AA2XFLM=
   </data>
  </layer>
- <layer name="WallLayer" width="20" height="10" opacity="0.5">
+ <layer name="WallLayer" width="20" height="10" opacity="0.36">
   <data encoding="base64" compression="zlib">
    eJxjYBj6wBANDyXzyLGD1uZR6u/Bbh4pAAB2QwdH
   </data>
