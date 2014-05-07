@@ -4,6 +4,8 @@
 #include "ZObjectFactory.hpp"
 #include "ZLevelFactory.hpp"
 
+USING_NS_CC;
+
 namespace pushpush {
 
 class Game {
@@ -11,8 +13,17 @@ class Game {
     LevelFactory *levelFactory;
     Ball* ball;
     Level* level;
+    ZScene* zscene;
+
   public:
     Game() {
+    }
+
+    void start() {
+        CCDirector* pDirector = CCDirector::sharedDirector();
+        zscene = new pushpush::ZScene();
+        pDirector->runWithScene(zscene->getScene());
+        init(zscene->getLayer());
     }
 
     void init(CCLayer* l) {

@@ -21,6 +21,32 @@ class ZSprite {
     }
 };
 
+class DummyLayer : public cocos2d::CCLayer {
+  public:
+    CREATE_FUNC(DummyLayer);
+};
+
+class ZScene {
+  protected:
+    CCScene* scene;
+    DummyLayer* layer;
+
+  public:
+    ZScene() {
+        scene = CCScene::create();
+        layer = DummyLayer::create();
+        scene->addChild(layer);
+    }
+
+    CCScene* getScene() {
+        return scene;
+    }
+
+    CCLayer* getLayer() {
+        return layer;
+    }
+};
+
 };
 
 #endif

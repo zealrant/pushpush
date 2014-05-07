@@ -23,7 +23,7 @@
  </layer>
  <layer name="WallLayer" width="20" height="10" opacity="0.36">
   <data encoding="base64" compression="zlib">
-   eJxjYBj6wBANDyXzyLGD1uZR6u/Bbh4pAAB2QwdH
+   eJxjYBj6wBANU8M8IyimtXnkuBmff6lhHqXhCPOvIRqbEvOo6T5SAAB/PwdN
   </data>
  </layer>
  <objectgroup name="Houses" width="20" height="10">
