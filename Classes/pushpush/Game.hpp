@@ -8,7 +8,7 @@ USING_NS_CC;
 
 namespace pushpush {
 
-class Game {
+class Game : public IHeartbeat {
     ObjectFactory *objFactory;
     LevelFactory *levelFactory;
     Ball* ball;
@@ -21,20 +21,20 @@ class Game {
 
     void start() {
         CCDirector* pDirector = CCDirector::sharedDirector();
-        zscene = new pushpush::ZScene();
+        zscene = new ZScene(this);
+        loadLevel(zscene->getLayer(), 0);
         pDirector->runWithScene(zscene->getScene());
-        init(zscene->getLayer());
     }
 
-    void init(CCLayer* l) {
+    void loadLevel(CCLayer* l, int levelNum) {
         levelFactory = new ZLevelFactory(l);
-        level = levelFactory->createLevel(0);
+        level = levelFactory->createLevel(levelNum);
 
         objFactory = new ZObjectFactory(l);
         ball = objFactory->createBall();
     }
 
-    void heartbeat() {
+    virtual void heartbeat() {
         int d = rand() % 4;
         ball->move((DIRECT)d);
     }

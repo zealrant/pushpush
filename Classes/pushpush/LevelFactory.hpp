@@ -7,6 +7,11 @@
 
 namespace pushpush {
 
+class IHeartbeat {
+  public:
+    virtual void heartbeat() = 0;
+};
+
 class LevelBuilder {
   private:
     Size size;

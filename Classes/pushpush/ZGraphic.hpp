@@ -3,6 +3,8 @@
 
 USING_NS_CC;
 
+#include "LevelFactory.hpp"
+
 namespace pushpush {
 
 class ZSprite {
@@ -21,20 +23,48 @@ class ZSprite {
     }
 };
 
-class DummyLayer : public cocos2d::CCLayer {
+class HeartBeatLayer : public cocos2d::CCLayer {
+  private:
+    IHeartbeat *beat;
+
   public:
-    CREATE_FUNC(DummyLayer);
+    virtual ~HeartBeatLayer() {
+        onStopTimer();
+    }
+
+    void setupHeartBeat(IHeartbeat* b) {
+        beat = b;
+        onStartTimer();
+    }
+
+    void LogicTick(float f) {
+        beat->heartbeat();
+    }
+
+    void onStartTimer() {
+        CCLOG("%s", __func__);
+        this->schedule(schedule_selector(HeartBeatLayer::LogicTick), 1.0f);
+    }
+
+    void onStopTimer() {
+        CCLOG("%s", __func__);
+        this->unschedule(schedule_selector(HeartBeatLayer::LogicTick));
+    }
+
+
+    CREATE_FUNC(HeartBeatLayer);
 };
 
 class ZScene {
   protected:
     CCScene* scene;
-    DummyLayer* layer;
+    HeartBeatLayer* layer;
 
   public:
-    ZScene() {
+    ZScene(IHeartbeat* beat) {
         scene = CCScene::create();
-        layer = DummyLayer::create();
+        layer = HeartBeatLayer::create();
+        layer->setupHeartBeat(beat);
         scene->addChild(layer);
     }
 
