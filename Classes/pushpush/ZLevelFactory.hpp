@@ -20,9 +20,9 @@ class ZLevelFactory : public LevelFactory {
         return dic->valueForKey(key)->intValue() / TILE_SIZE;
     }
 
-    void buildPoints(CCTMXTiledMap* const map, const char* layerName,
-                     LevelBuilder* builder,
-                     LevelBuilder* (LevelBuilder::*func)(int, int)) {
+    void buildPoints(LevelBuilder* builder,
+                     LevelBuilder* (LevelBuilder::*func)(int, int),
+                     CCTMXTiledMap* const map, const char* layerName) {
         CCTMXObjectGroup* objGroup = map->objectGroupNamed(layerName);
         CCArray* arr = objGroup->getObjects();
         CCObject* obj;
@@ -45,9 +45,9 @@ class ZLevelFactory : public LevelFactory {
         LevelBuilder builder;
         CCSize sz = map->getMapSize();
         builder.setSize(sz.width, sz.height);
-        buildPoints(map, "SpawnPoint", &builder, &LevelBuilder::setHeroPos);
-        buildPoints(map, "Balls", &builder, &LevelBuilder::addBall);
-        buildPoints(map, "Houses", &builder, &LevelBuilder::addHouse);
+        buildPoints(&builder, &LevelBuilder::setHeroPos, map, "SpawnPoint");
+        buildPoints(&builder, &LevelBuilder::addBall, map, "Balls");
+        buildPoints(&builder, &LevelBuilder::addHouse, map, "Houses");
 
         CCTMXLayer* walls = map->layerNamed("WallLayer");
         builder.setTiles(walls->getTiles(), [](int tileValue) {

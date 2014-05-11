@@ -3,13 +3,38 @@
 
 #include <vector>
 #include <functional>
-#include "Level.hpp"
+#include "Tiles.hpp"
 
 namespace pushpush {
 
 class IHeartbeat {
   public:
     virtual void heartbeat() = 0;
+};
+
+class Level {
+    Size size;
+    Point posStart;
+    std::vector<Point*> houses;
+    std::vector<Point*> balls;
+    std::vector<Tile*> tiles;
+
+  public:
+    Level(Size s, Point p, std::vector<Point*> h,
+          std::vector<Point*> b, std::vector<Tile*> t)
+            : size(s), posStart(p), houses(h), balls(b), tiles(t) {
+    }
+
+    virtual ~Level() {
+        Deletor<Tile> deletorTile;
+        for_each(tiles.begin(), tiles.end(), deletorTile);
+        for_each(houses.begin(), houses.end(), deletorPoint);
+        for_each(balls.begin(), balls.end(), deletorPoint);
+    }
+
+    Tile* getTileAtPos(int x, int y) {
+        return tiles[y * size.width + y];
+    }
 };
 
 class LevelBuilder {
@@ -21,8 +46,6 @@ class LevelBuilder {
     std::vector<Tile*> tiles;
   public:
     virtual ~LevelBuilder() {
-        // std::for_each(houses.begin(), houses.end(),
-        //               [&](X& item) { delete item; });
     }
 
     LevelBuilder* setSize(int width, int height) {
@@ -60,7 +83,7 @@ class LevelBuilder {
     }
 
     Level* build() {
-        return NULL;
+        return new Level(size, posStart, houses, balls, tiles);
     }
 };
 
