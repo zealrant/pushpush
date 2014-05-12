@@ -4,6 +4,7 @@
 #include <vector>
 #include <functional>
 #include "Tiles.hpp"
+#include "Object.hpp"
 
 namespace pushpush {
 
@@ -15,21 +16,29 @@ class IHeartbeat {
 class Level {
     Size size;
     Point posStart;
-    std::vector<Point*> houses;
-    std::vector<Point*> balls;
+    Hero* hero;
+    std::vector<House*> houses;
+    std::vector<Ball*> balls;
     std::vector<Tile*> tiles;
 
   public:
-    Level(Size s, Point p, std::vector<Point*> h,
-          std::vector<Point*> b, std::vector<Tile*> t)
-            : size(s), posStart(p), houses(h), balls(b), tiles(t) {
+    Level(Size s, Point p, Hero* hero_, std::vector<House*> house,
+          std::vector<Ball*> b, std::vector<Tile*> t)
+            : size(s), posStart(p), hero(hero_), houses(house), balls(b),
+              tiles(t) {
     }
 
     virtual ~Level() {
         Deletor<Tile> deletorTile;
         for_each(tiles.begin(), tiles.end(), deletorTile);
-        for_each(houses.begin(), houses.end(), deletorPoint);
-        for_each(balls.begin(), balls.end(), deletorPoint);
+
+        Deletor<House> deletorHouse;
+        for_each(houses.begin(), houses.end(), deletorHouse);
+
+        Deletor<Ball> deletorBall;
+        for_each(balls.begin(), balls.end(), deletorBall);
+
+        delete hero;
     }
 
     Tile* getTileAtPos(int x, int y) {
@@ -41,10 +50,14 @@ class LevelBuilder {
   private:
     Size size;
     Point posStart;
-    std::vector<Point*> houses;
-    std::vector<Point*> balls;
+    Hero* hero;
+    std::vector<House*> houses;
+    std::vector<Ball*> balls;
     std::vector<Tile*> tiles;
   public:
+    LevelBuilder() : hero(NULL) {
+    }
+
     virtual ~LevelBuilder() {
     }
 
@@ -54,19 +67,26 @@ class LevelBuilder {
         return this;
     }
 
-    LevelBuilder* setHeroPos(int x, int y) {
-        posStart.x = x;
-        posStart.y = y;
+    virtual LevelBuilder* setHero(Hero* h) {
+        hero = h;
         return this;
     }
 
-    LevelBuilder* addBall(int x, int y) {
-        balls.push_back(new Point(x, y));
+    virtual LevelBuilder* setHeroPos(int x, int y) {
+        if(hero != NULL) {
+            hero->setPosition(x, y);
+            posStart.set(x, y);
+        }
         return this;
     }
 
-    LevelBuilder* addHouse(int x, int y) {
-        houses.push_back(new Point(x, y));
+    virtual LevelBuilder* addBall(Ball* b) {
+        balls.push_back(b);
+        return this;
+    }
+
+    virtual LevelBuilder* addHouse(House* h) {
+        houses.push_back(h);
         return this;
     }
 
@@ -83,7 +103,7 @@ class LevelBuilder {
     }
 
     Level* build() {
-        return new Level(size, posStart, houses, balls, tiles);
+        return new Level(size, posStart, hero, houses, balls, tiles);
     }
 };
 

@@ -16,8 +16,16 @@ class ZObjectFactory : public ObjectFactory {
     ZObjectFactory(CCLayer* l) : layer(l) {
     }
 
-    virtual Ball* createBall() {
-        return new ZBall(layer, InitialX, InitialY);
+    virtual Ball* createBall(int x, int y) {
+        return new ZBall(layer, x, x);
+    }
+
+    virtual House* createHouse(int x, int y) {
+        return new ZHouse(layer, x, x);
+    }
+
+    virtual Hero* createHero(int x, int y) {
+        return new ZHero(layer, x, x);
     }
 };
 

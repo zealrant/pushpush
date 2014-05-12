@@ -7,7 +7,9 @@ namespace pushpush {
 
 class ObjectFactory {
   public:
-     virtual Ball* createBall() = 0;
+    virtual Ball* createBall(int x, int y) = 0;
+    virtual House* createHouse(int x, int y) = 0;
+    virtual Hero* createHero(int x, int y) = 0;
 };
 
 };

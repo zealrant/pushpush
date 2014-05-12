@@ -29,14 +29,9 @@ class Game : public IHeartbeat {
     void loadLevel(CCLayer* l, int levelNum) {
         levelFactory = new ZLevelFactory(l);
         level = levelFactory->createLevel(levelNum);
-
-        objFactory = new ZObjectFactory(l);
-        ball = objFactory->createBall();
     }
 
     virtual void heartbeat() {
-        int d = rand() % 4;
-        ball->move((DIRECT)d);
     }
 };
 

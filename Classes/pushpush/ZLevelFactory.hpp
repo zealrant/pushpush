@@ -7,6 +7,29 @@ USING_NS_CC;
 
 namespace pushpush {
 
+class ZLevelBuilder : public LevelBuilder {
+    ZObjectFactory* objFactory;
+
+  public:
+    ZLevelBuilder(ZObjectFactory* objF) : objFactory(objF) {
+    }
+
+    virtual LevelBuilder* setHeroPos(int x, int y) {
+        Hero* h = objFactory->createHero(x, y);
+        return LevelBuilder::setHero(h);
+    }
+
+    virtual LevelBuilder* addBall(int x, int y) {
+        Ball* ball = objFactory->createBall(x, y);
+        return LevelBuilder::addBall(ball);
+    }
+
+    virtual LevelBuilder* addHouse(int x, int y) {
+        House* h = objFactory->createHouse(x, y);
+        return LevelBuilder::addHouse(h);
+    }
+};
+
 class ZLevelFactory : public LevelFactory {
     CCLayer* layer;
     static const int TILE_SIZE;
@@ -20,8 +43,8 @@ class ZLevelFactory : public LevelFactory {
         return dic->valueForKey(key)->intValue() / TILE_SIZE;
     }
 
-    void buildPoints(LevelBuilder* builder,
-                     LevelBuilder* (LevelBuilder::*func)(int, int),
+    void buildPoints(ZLevelBuilder* builder,
+                     LevelBuilder* (ZLevelBuilder::*func)(int, int),
                      CCTMXTiledMap* const map, const char* layerName) {
         CCTMXObjectGroup* objGroup = map->objectGroupNamed(layerName);
         CCArray* arr = objGroup->getObjects();
@@ -42,12 +65,14 @@ class ZLevelFactory : public LevelFactory {
         CCTMXTiledMap* map = CCTMXTiledMap::create(stageFileNames[stage]);
         layer->addChild(map, 0, 100);
 
-        LevelBuilder builder;
+        ZObjectFactory* objFactory = new ZObjectFactory(layer);
+        ZLevelBuilder builder(objFactory);
+
         CCSize sz = map->getMapSize();
         builder.setSize(sz.width, sz.height);
-        buildPoints(&builder, &LevelBuilder::setHeroPos, map, "SpawnPoint");
-        buildPoints(&builder, &LevelBuilder::addBall, map, "Balls");
-        buildPoints(&builder, &LevelBuilder::addHouse, map, "Houses");
+        buildPoints(&builder, &ZLevelBuilder::setHeroPos, map, "SpawnPoint");
+        buildPoints(&builder, &ZLevelBuilder::addBall, map, "Balls");
+        buildPoints(&builder, &ZLevelBuilder::addHouse, map, "Houses");
 
         CCTMXLayer* walls = map->layerNamed("WallLayer");
         builder.setTiles(walls->getTiles(), [](int tileValue) {

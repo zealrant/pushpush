@@ -8,6 +8,9 @@ class Point {
     int x, y;
     Point() : x(0), y(0) { }
     Point(int n1, int n2) : x(n1), y(n2) { }
+    void set(int n1, int n2) {
+        x = n1, y = n2;
+    }
 };
 
 class Size {
