@@ -17,15 +17,15 @@ class ZObjectFactory : public ObjectFactory {
     }
 
     virtual Ball* createBall(int x, int y) {
-        return new ZBall(layer, x, x);
+        return new ZBall(layer, x, y);
     }
 
     virtual House* createHouse(int x, int y) {
-        return new ZHouse(layer, x, x);
+        return new ZHouse(layer, x, y);
     }
 
     virtual Hero* createHero(int x, int y) {
-        return new ZHero(layer, x, x);
+        return new ZHero(layer, x, y);
     }
 };
 

@@ -11,7 +11,6 @@ namespace pushpush {
 class Game : public IHeartbeat {
     ObjectFactory *objFactory;
     LevelFactory *levelFactory;
-    Ball* ball;
     Level* level;
     ZScene* zscene;
 
