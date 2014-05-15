@@ -11,9 +11,9 @@ namespace pushpush {
 class ZObjectFactory : public ObjectFactory {
     static const int InitialX;
     static const int InitialY;
-    CCLayer* layer;
+    Layer* layer;
   public:
-    ZObjectFactory(CCLayer* l) : layer(l) {
+    ZObjectFactory(Layer* l) : layer(l) {
     }
 
     virtual Ball* createBall(int x, int y) {

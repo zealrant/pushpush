@@ -1,3 +1,6 @@
 proj.*
 /Classes/cscope.files
 /Classes/cscope.out
+/bin/
+/cocos2d/
+/linux-build/

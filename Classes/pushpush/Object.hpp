@@ -11,8 +11,9 @@ enum DIRECT {
 
 class Object {
   protected:
-    Point p;
+    ZPoint p;
   public:
+    virtual ~Object() {}
     int getX() {
         return p.x;
     }
@@ -28,6 +29,7 @@ class Object {
 
 class Movable : public Object {
   protected:
+    virtual ~Movable() {}
     Movable() {
         p.x = 0;
         p.y = 0;
@@ -43,6 +45,7 @@ class Movable : public Object {
 
 class Unmovable : public Object {
   protected:
+    virtual ~Unmovable() {}
     Unmovable() {
         p.x = 0;
         p.y = 0;
@@ -56,6 +59,7 @@ class Unmovable : public Object {
 
 class Ball : public Movable {
   public:
+    virtual ~Ball() {}
     Ball() : Movable() {
     }
 
@@ -87,6 +91,7 @@ class Ball : public Movable {
 
 class House : public Unmovable {
   public:
+    virtual ~House() {}
     House() : Unmovable() {
     }
 
@@ -101,6 +106,8 @@ class Hero : public Movable {
 
     Hero(int x, int y) : Movable(x, y) {
     }
+
+    virtual ~Hero() { }
 
     void setPosition(int x, int y) {
         p.x = x;

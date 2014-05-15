@@ -19,13 +19,13 @@ class Game : public IHeartbeat {
     }
 
     void start() {
-        CCDirector* pDirector = CCDirector::sharedDirector();
+        Director* pDirector = Director::getInstance();
         zscene = new ZScene(this);
         loadLevel(zscene->getLayer(), 0);
         pDirector->runWithScene(zscene->getScene());
     }
 
-    void loadLevel(CCLayer* l, int levelNum) {
+    void loadLevel(Layer* l, int levelNum) {
         levelFactory = new ZLevelFactory(l);
         level = levelFactory->createLevel(levelNum);
     }

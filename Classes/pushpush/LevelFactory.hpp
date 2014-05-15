@@ -14,15 +14,16 @@ class IHeartbeat {
 };
 
 class Level {
-    Size size;
-    Point posStart;
+  private:
+    ZSize size;
+    ZPoint posStart;
     Hero* hero;
     std::vector<House*> houses;
     std::vector<Ball*> balls;
     std::vector<Tile*> tiles;
 
   public:
-    Level(Size s, Point p, Hero* hero_, std::vector<House*> house,
+    Level(ZSize s, ZPoint p, Hero* hero_, std::vector<House*> house,
           std::vector<Ball*> b, std::vector<Tile*> t)
             : size(s), posStart(p), hero(hero_), houses(house), balls(b),
               tiles(t) {
@@ -31,13 +32,10 @@ class Level {
     virtual ~Level() {
         Deletor<Tile> deletorTile;
         for_each(tiles.begin(), tiles.end(), deletorTile);
-
         Deletor<House> deletorHouse;
         for_each(houses.begin(), houses.end(), deletorHouse);
-
         Deletor<Ball> deletorBall;
         for_each(balls.begin(), balls.end(), deletorBall);
-
         delete hero;
     }
 
@@ -48,8 +46,8 @@ class Level {
 
 class LevelBuilder {
   private:
-    Size size;
-    Point posStart;
+    ZSize size;
+    ZPoint posStart;
     Hero* hero;
     std::vector<House*> houses;
     std::vector<Ball*> balls;

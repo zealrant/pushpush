@@ -9,21 +9,21 @@ namespace pushpush {
 
 class ZSprite {
   protected:
-    CCSprite* sprite;
-    CCLayer* layer;
+    Sprite* sprite;
+    Layer* layer;
 
-    ZSprite(CCLayer* l, const char* res) : layer(l) {
-        sprite = CCSprite::create(res);
+    ZSprite(Layer* l, const char* res) : layer(l) {
+        sprite = Sprite::create(res);
         layer->addChild(sprite, 0);
     }
 
   public:
-    CCSprite* getSprite() {
+    Sprite* getSprite() {
         return sprite;
     }
 };
 
-class HeartBeatLayer : public cocos2d::CCLayer {
+class HeartBeatLayer : public cocos2d::Layer {
   private:
     IHeartbeat *beat;
 
@@ -57,22 +57,22 @@ class HeartBeatLayer : public cocos2d::CCLayer {
 
 class ZScene {
   protected:
-    CCScene* scene;
+    Scene* scene;
     HeartBeatLayer* layer;
 
   public:
     ZScene(IHeartbeat* beat) {
-        scene = CCScene::create();
+        scene = Scene::create();
         layer = HeartBeatLayer::create();
         layer->setupHeartBeat(beat);
         scene->addChild(layer);
     }
 
-    CCScene* getScene() {
+    Scene* getScene() {
         return scene;
     }
 
-    CCLayer* getLayer() {
+    Layer* getLayer() {
         return layer;
     }
 };

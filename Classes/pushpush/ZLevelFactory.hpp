@@ -31,7 +31,7 @@ class ZLevelBuilder : public LevelBuilder {
 };
 
 class ZLevelFactory : public LevelFactory {
-    CCLayer* layer;
+    Layer* layer;
     static const int TILE_SIZE;
     static const int TILE_WALL;
     static const int TILE_MOVABLE;
@@ -39,42 +39,39 @@ class ZLevelFactory : public LevelFactory {
     static const char* stageFileNames[];
 
   private:
-    inline int offsetForKey(CCDictionary* const dic, const char* key) const {
-        return dic->valueForKey(key)->intValue() / TILE_SIZE;
-    }
-
     void buildPoints(ZLevelBuilder* builder,
                      LevelBuilder* (ZLevelBuilder::*func)(int, int),
-                     CCTMXTiledMap* const map, const char* layerName) {
-        CCTMXObjectGroup* objGroup = map->objectGroupNamed(layerName);
-        CCArray* arr = objGroup->getObjects();
-        CCObject* obj;
-        int x, y;
-        CCARRAY_FOREACH(arr, obj) {
-            x = offsetForKey((CCDictionary*)obj, "x");
-            y = offsetForKey((CCDictionary*)obj, "y");
+                     TMXTiledMap* const map, const char* layerName) {
+        TMXObjectGroup* objGroup = map->getObjectGroup(layerName);
+        const ValueVector arr = objGroup->getObjects();
+        // int x, y;
+
+        for (Value v : arr) {
+            ValueMap m = v.asValueMap();
+            int x = m["x"].asInt() / TILE_SIZE;
+            int y = m["y"].asInt() / TILE_SIZE;
             (builder->*func)(x, y);
         }
         return;
     }
 
   public:
-    ZLevelFactory(CCLayer* l) : layer(l) { }
+    ZLevelFactory(Layer* l) : layer(l) { }
 
     virtual Level* createLevel(int stage) {
-        CCTMXTiledMap* map = CCTMXTiledMap::create(stageFileNames[stage]);
+        TMXTiledMap* map = TMXTiledMap::create(stageFileNames[stage]);
         layer->addChild(map, 0, 100);
 
         ZObjectFactory* objFactory = new ZObjectFactory(layer);
         ZLevelBuilder builder(objFactory);
 
-        CCSize sz = map->getMapSize();
+        Size sz = map->getMapSize();
         builder.setSize(sz.width, sz.height);
         buildPoints(&builder, &ZLevelBuilder::setHeroPos, map, "SpawnPoint");
         buildPoints(&builder, &ZLevelBuilder::addBall, map, "Balls");
         buildPoints(&builder, &ZLevelBuilder::addHouse, map, "Houses");
 
-        CCTMXLayer* walls = map->layerNamed("WallLayer");
+        TMXLayer* walls = map->getLayer("WallLayer");
         builder.setTiles(walls->getTiles(), [](int tileValue) {
                 Tile* t;
                 if(tileValue == TILE_BACKGROUND) {
