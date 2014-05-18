@@ -32,10 +32,10 @@ class ZLevelBuilder : public LevelBuilder {
 
 class ZLevelFactory : public LevelFactory {
     Layer* layer;
-    static const int TILE_SIZE;
-    static const int TILE_WALL;
-    static const int TILE_MOVABLE;
-    static const int TILE_BACKGROUND;
+    static const int TILE_SIZE = 33;
+    static const int TILE_WALL = 49;
+    static const int TILE_MOVABLE = 50;
+    static const int TILE_BACKGROUND = 0;
     static const char* stageFileNames[];
 
   private:
@@ -88,10 +88,6 @@ class ZLevelFactory : public LevelFactory {
     }
 };
 
-const int ZLevelFactory::TILE_SIZE = 33;
-const int ZLevelFactory::TILE_BACKGROUND = 0;
-const int ZLevelFactory::TILE_WALL = 49;
-const int ZLevelFactory::TILE_MOVABLE = 50;
 const char* ZLevelFactory::stageFileNames[] = {"stage1.tmx", "stage2.tmx"};
 
 };

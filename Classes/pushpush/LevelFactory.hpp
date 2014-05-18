@@ -13,6 +13,11 @@ class IHeartbeat {
     virtual void heartbeat() = 0;
 };
 
+class IKeyListener {
+  public:
+    virtual void onKey(int keyCode) = 0;
+};
+
 class Level {
   private:
     ZSize size;
@@ -41,6 +46,22 @@ class Level {
 
     Tile* getTileAtPos(int x, int y) {
         return tiles[y * size.width + y];
+    }
+
+    virtual void keyUp() {
+        hero->move(DIRECT::UP);
+    }
+
+    virtual void keyDown() {
+        hero->move(DIRECT::DOWN);
+    }
+
+    virtual void keyLeft() {
+        hero->move(DIRECT::LEFT);
+    }
+
+    virtual void keyRight() {
+        hero->move(DIRECT::RIGHT);
     }
 };
 

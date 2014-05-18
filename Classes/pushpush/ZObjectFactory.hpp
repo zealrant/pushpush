@@ -9,8 +9,8 @@ USING_NS_CC;
 namespace pushpush {
 
 class ZObjectFactory : public ObjectFactory {
-    static const int InitialX;
-    static const int InitialY;
+    static const int InitialX = 8;
+    static const int InitialY = 8;
     Layer* layer;
   public:
     ZObjectFactory(Layer* l) : layer(l) {
@@ -28,9 +28,6 @@ class ZObjectFactory : public ObjectFactory {
         return new ZHero(layer, x, y);
     }
 };
-
-const int ZObjectFactory::InitialX = 8;
-const int ZObjectFactory::InitialY = 8;
 
 };
 

@@ -26,10 +26,28 @@ class ZSprite {
 class HeartBeatLayer : public cocos2d::Layer {
   private:
     IHeartbeat *beat;
+    IKeyListener *keyListener;
+    EventListenerKeyboard* listener;
 
   public:
     virtual ~HeartBeatLayer() {
+        _eventDispatcher->removeAllEventListeners();
         onStopTimer();
+    }
+
+    void setupKeyListener(IKeyListener* l) {
+        keyListener = l;
+        listener = EventListenerKeyboard::create();
+        listener->onKeyPressed = CC_CALLBACK_2(HeartBeatLayer::onKeyPressed, this);
+        listener->onKeyReleased = CC_CALLBACK_2(HeartBeatLayer::onKeyReleased, this);
+        _eventDispatcher->addEventListenerWithSceneGraphPriority(listener, this);
+    }
+
+    virtual void onKeyPressed(EventKeyboard::KeyCode keyCode, Event* event) {
+        keyListener->onKey((int)keyCode);
+    }
+
+    virtual void onKeyReleased(EventKeyboard::KeyCode keyCode, Event* event) {
     }
 
     void setupHeartBeat(IHeartbeat* b) {
@@ -61,10 +79,11 @@ class ZScene {
     HeartBeatLayer* layer;
 
   public:
-    ZScene(IHeartbeat* beat) {
+    ZScene(IHeartbeat* beat, IKeyListener* listener) {
         scene = Scene::create();
         layer = HeartBeatLayer::create();
         layer->setupHeartBeat(beat);
+        layer->setupKeyListener(listener);
         scene->addChild(layer);
     }
 
