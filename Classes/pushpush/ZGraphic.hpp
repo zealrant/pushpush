@@ -60,12 +60,10 @@ class HeartBeatLayer : public cocos2d::Layer {
     }
 
     void onStartTimer() {
-        CCLOG("%s", __func__);
         this->schedule(schedule_selector(HeartBeatLayer::LogicTick), 1.0f);
     }
 
     void onStopTimer() {
-        CCLOG("%s", __func__);
         this->unschedule(schedule_selector(HeartBeatLayer::LogicTick));
     }
 

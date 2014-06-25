@@ -37,22 +37,28 @@ class Game : public IHeartbeat, public IKeyListener {
     virtual void heartbeat() {
     }
 
+    virtual void checkFinish() {
+        if(level->checkFinish()) {
+        }
+    }
+
     virtual void onKey(int keyCode) {
         if(level != NULL) {
             switch(keyCode) {
                 case KEY_UP:
-                    level->keyUp();
+                    level->doKeyEvent(DIRECT::UP);
                     break;
                 case KEY_RIGHT:
-                    level->keyRight();
+                    level->doKeyEvent(DIRECT::RIGHT);
                     break;
                 case KEY_DOWN:
-                    level->keyDown();
+                    level->doKeyEvent(DIRECT::DOWN);
                     break;
                 case KEY_LEFT:
-                    level->keyLeft();
+                    level->doKeyEvent(DIRECT::LEFT);
                     break;
             }
+            checkFinish();
         } else {
             CCLOG("Level is null");
         }

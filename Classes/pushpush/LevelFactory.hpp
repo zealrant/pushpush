@@ -48,20 +48,66 @@ class Level {
         return tiles[y * size.width + y];
     }
 
-    virtual void keyUp() {
-        hero->move(DIRECT::UP);
+    Ball* getBallAtPos(int x, int y) {
+        Ball* rtn = NULL;
+        for_each(balls.begin(), balls.end(), [&rtn, &x, &y] (Ball* b) {
+                if(b->getX() == x && b->getY() == y) {
+                    rtn = b;
+                }
+        });
+        return rtn;
     }
 
-    virtual void keyDown() {
-        hero->move(DIRECT::DOWN);
+    virtual void doKeyEvent(DIRECT d) {
+        ZPoint moved;
+        hero->getMovePoint(&moved, d, 1);
+        if(moved.x < 0 || moved.y < 0
+           || (size_t)moved.x >= size.width
+           || (size_t) moved.y >= size.height) {
+            return;
+        }
+
+        Tile* tile = getTileAtPos(moved.x, moved.y);
+        if(!tile->checkMovable()) {
+            return;
+        }
+
+        Ball* ball = getBallAtPos(moved.x, moved.y);
+        if(ball != NULL) {
+            ball->getMovePoint(&moved, d, 1);
+            Ball* anotherBall = getBallAtPos(moved.x, moved.y);
+            if(anotherBall != NULL) {
+                return;
+            }
+            if(moved.x < 0 || moved.y < 0
+               || (size_t)moved.x >= size.width
+               || (size_t) moved.y >= size.height) {
+                return;
+            }
+            tile = getTileAtPos(moved.x, moved.y);
+            if(!tile->checkMovable()) {
+                return;
+            }
+            ball->move(d);
+        }
+        hero->move(d);
     }
 
-    virtual void keyLeft() {
-        hero->move(DIRECT::LEFT);
-    }
-
-    virtual void keyRight() {
-        hero->move(DIRECT::RIGHT);
+    virtual bool checkFinish() {
+        bool finishState = true;
+        for(auto b = balls.begin(); b != balls.end(); b++) {
+            bool found = false;
+            for(auto h = houses.begin(); h != houses.end(); h++) {
+                if((*b)->getX() == (*h)->getX() &&
+                   (*b)->getY() == (*h)->getY()) {
+                    found = true;
+                }
+            }
+            if(!found) {
+                finishState = false;
+            }
+        }
+        return finishState;
     }
 };
 

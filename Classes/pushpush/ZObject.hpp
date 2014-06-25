@@ -12,7 +12,7 @@ class ZBall : public Ball, public ZSprite {
   private:
     static const float MoveSpeed;
     static const int Magnification;
-    inline Point getCurrentPoint() {
+    inline Point getCurrentPoint() const {
         return Point(p.x * Magnification, (p.y + 1) * Magnification);
     }
   public:
@@ -25,10 +25,17 @@ class ZBall : public Ball, public ZSprite {
     }
 
     virtual bool move(DIRECT d) {
-        bool rtn = Ball::move(d);
-        auto action = MoveTo::create(MoveSpeed, getCurrentPoint());
-        sprite->runAction(action);
-        return rtn;
+        if(sprite->getNumberOfRunningActions() == 0 && Ball::move(d)) {
+            auto move = MoveTo::create(MoveSpeed, getCurrentPoint());
+            auto done = CallFunc::create(CC_CALLBACK_0(ZBall::moveDone, this));
+            auto *seq = Sequence::create(move, done, NULL);
+            sprite->runAction(seq);
+        }
+        return true;
+    }
+
+    void moveDone() {
+        return;
     }
 };
 
@@ -36,7 +43,7 @@ class ZHero : public Hero, public ZSprite {
   private:
     static const float MoveSpeed;
     static const int Magnification;
-    inline Point getCurrentPoint() {
+    inline Point getCurrentPoint() const {
         return Point(p.x * Magnification, (p.y + 1) * Magnification);
     }
   public:
@@ -49,17 +56,24 @@ class ZHero : public Hero, public ZSprite {
     }
 
     virtual bool move(DIRECT d) {
-        bool rtn = Hero::move(d);
-        auto action = MoveTo::create(MoveSpeed, getCurrentPoint());
-        sprite->runAction(action);
-        return rtn;
+        if(sprite->getNumberOfRunningActions() == 0 && Hero::move(d)) {
+            auto move = MoveTo::create(MoveSpeed, getCurrentPoint());
+            auto done = CallFunc::create(CC_CALLBACK_0(ZHero::moveDone, this));
+            auto *seq = Sequence::create(move, done, NULL);
+            sprite->runAction(seq);
+        }
+        return true;
+    }
+
+    void moveDone() {
+        return;
     }
 };
 
 class ZHouse : public House, public ZSprite {
   private:
     static const int Magnification;
-    inline Point getCurrentPoint() {
+    inline Point getCurrentPoint() const {
         return Point(p.x * Magnification, (p.y + 1) * Magnification);
     }
   public:
@@ -73,9 +87,9 @@ class ZHouse : public House, public ZSprite {
     }
 };
 
-const float ZBall::MoveSpeed = 0.5;
+const float ZBall::MoveSpeed = 0.2;
 const int ZBall::Magnification = 35;
-const float ZHero::MoveSpeed = 0.5;
+const float ZHero::MoveSpeed = 0.2;
 const int ZHero::Magnification = 35;
 const int ZHouse::Magnification = 35;
 

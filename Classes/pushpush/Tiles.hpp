@@ -26,7 +26,7 @@ class TileBackground : public Tile {
   public:
     virtual ~TileBackground() { }
     virtual bool checkMovable() {
-        return false;
+        return true;
     }
 };
 

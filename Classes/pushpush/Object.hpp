@@ -35,12 +35,47 @@ class Movable : public Object {
         p.y = 0;
     }
 
+  public:
     Movable(int x, int y) {
         p.x = x;
         p.y = y;
     }
 
-    virtual bool move(DIRECT d, int step) = 0;
+    virtual bool move(DIRECT d, int step) {
+        ZPoint z;
+        getMovePoint(&z, d, step);
+        p.x = z.x;
+        p.y = z.y;
+        return true;
+    }
+
+    void getMovePoint(ZPoint* rtn, DIRECT d, int step) {
+        rtn->x = p.x;
+        rtn->y = p.y;
+        switch(d) {
+            case UP:
+                rtn->y++;
+                break;
+            case RIGHT:
+                rtn->x++;
+                break;
+            case DOWN:
+                rtn->y--;
+                break;
+            case LEFT:
+                rtn->x--;
+                break;
+        }
+    }
+
+    virtual bool move(DIRECT d) {
+        return this->move(d, 1);
+    }
+
+    void setPosition(int x, int y) {
+        p.x = x;
+        p.y = y;
+    }
 };
 
 class Unmovable : public Object {
@@ -65,28 +100,6 @@ class Ball : public Movable {
 
     Ball(int x, int y) : Movable(x, y) {
     }
-
-    virtual bool move(DIRECT d, int step) {
-        switch(d) {
-            case UP:
-                p.y++;
-                break;
-            case RIGHT:
-                p.x++;
-                break;
-            case DOWN:
-                p.y--;
-                break;
-            case LEFT:
-                p.x--;
-                break;
-        }
-        return true;
-    }
-
-    virtual bool move(DIRECT d) {
-        return this->move(d, 1);
-    }
 };
 
 class House : public Unmovable {
@@ -108,33 +121,6 @@ class Hero : public Movable {
     }
 
     virtual ~Hero() { }
-
-    void setPosition(int x, int y) {
-        p.x = x;
-        p.y = y;
-    }
-
-    virtual bool move(DIRECT d, int step) {
-        switch(d) {
-            case UP:
-                p.y++;
-                break;
-            case RIGHT:
-                p.x++;
-                break;
-            case DOWN:
-                p.y--;
-                break;
-            case LEFT:
-                p.x--;
-                break;
-        }
-        return true;
-    }
-
-    virtual bool move(DIRECT d) {
-        return this->move(d, 1);
-    }
 };
 
 };
