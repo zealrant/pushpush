@@ -47,6 +47,9 @@ class ZStoryIntro : public ZStory {
         // move to center
         Size s = Director::getInstance()->getWinSize();
         menuBoard->setPosition(0, s.height / 2);
+        Size menuBoardSize = menuBoard->getContentSize();
+        textReady->setPosition(-menuBoardSize.width/2, -menuBoardSize.height*2);
+        textGo->setPosition(-menuBoardSize.width/2, -menuBoardSize.height*2);
 
         // Create the actions
         MoveTo* actionIn = MoveTo::create(0.2,
@@ -98,6 +101,9 @@ class ZStoryOutro : public ZStory {
         // move to center
         Size s = Director::getInstance()->getWinSize();
         menuBoard->setPosition(0, s.height / 2);
+        Size menuBoardSize = menuBoard->getContentSize();
+        textReady->setPosition(-menuBoardSize.width/2, menuBoardSize.height);
+        textGo->setPosition(-menuBoardSize.width/2, menuBoardSize.height);
 
         // Create the actions
         MoveTo* actionIn = MoveTo::create(0.2,

@@ -15,13 +15,14 @@ class Game : public IHeartbeat, public IKeyListener {
     Level* level;
     ZScene* zscene;
     int levelIndex;
+    std::function<void()> levelDoneCallback;
+
+  public:
     static const int KEY_LEFT = 4177;
     static const int KEY_UP = 4178;
     static const int KEY_RIGHT = 4179;
     static const int KEY_DOWN = 4180;
-    std::function<void()> levelDoneCallback;
 
-  public:
     Game() : level(NULL), levelIndex(0) {
         levelDoneCallback = std::bind(&Game::doneLevel, this);
     }

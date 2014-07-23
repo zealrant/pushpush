@@ -12,30 +12,33 @@ class ZBall : public Ball, public ZSprite {
   private:
     static const float MoveSpeed;
     static const int Magnification;
+    int initialX, initialY;
     inline Point getCurrentPoint() const {
-        return Point(p.x * Magnification, (p.y + 1) * Magnification);
+        return Point(p.x * Magnification + initialX,
+                     (p.y + 1) * Magnification + initialY);
     }
   public:
     ZBall(Layer* l) : Ball(), ZSprite(l, "box.png") {
         sprite->setPosition(getCurrentPoint());
     }
 
-    ZBall(Layer* l, int x, int y) : Ball(x, y), ZSprite(l, "box.png") {
+    ZBall(Layer* l, int x, int y, int initX, int initY)
+            : Ball(x, y), ZSprite(l, "box.png"),
+              initialX(initX), initialY(initY) {
         sprite->setPosition(getCurrentPoint());
     }
 
     virtual bool move(DIRECT d) {
         if(sprite->getNumberOfRunningActions() == 0 && Ball::move(d)) {
             auto move = MoveTo::create(MoveSpeed, getCurrentPoint());
-            auto done = CallFunc::create(CC_CALLBACK_0(ZBall::moveDone, this));
+            CallFunc* done = NULL;
+            if(moveCallback != NULL) {
+                done = CallFunc::create(moveCallback);
+            }
             auto *seq = Sequence::create(move, done, NULL);
             sprite->runAction(seq);
         }
         return true;
-    }
-
-    void moveDone() {
-        return;
     }
 };
 
@@ -43,15 +46,19 @@ class ZHero : public Hero, public ZSprite {
   private:
     static const float MoveSpeed;
     static const int Magnification;
+    int initialX, initialY;
     inline Point getCurrentPoint() const {
-        return Point(p.x * Magnification, (p.y + 1) * Magnification);
+        return Point(p.x * Magnification + initialX,
+                     (p.y + 1) * Magnification + initialY);
     }
   public:
     ZHero(Layer* l) : Hero(), ZSprite(l, "forklift.png") {
         sprite->setPosition(getCurrentPoint());
     }
 
-    ZHero(Layer* l, int x, int y) : Hero(x, y), ZSprite(l, "forklift.png") {
+    ZHero(Layer* l, int x, int y, int initX, int initY)
+            : Hero(x, y), ZSprite(l, "forklift.png"),
+              initialX(initX), initialY(initY) {
         sprite->setPosition(getCurrentPoint());
     }
 
@@ -72,16 +79,19 @@ class ZHero : public Hero, public ZSprite {
 class ZHouse : public House, public ZSprite {
   private:
     static const int Magnification;
+    int initialX, initialY;
     inline Point getCurrentPoint() const {
-        return Point(p.x * Magnification, (p.y + 1) * Magnification);
+        return Point(p.x * Magnification + initialX,
+                     (p.y + 1) * Magnification + initialY);
     }
   public:
     ZHouse(Layer* l) : House(), ZSprite(l, "destination.png") {
         sprite->setPosition(getCurrentPoint());
     }
 
-    ZHouse(Layer* l, int x, int y) : House(x, y),
-                                       ZSprite(l, "destination.png") {
+    ZHouse(Layer* l, int x, int y, int initX, int initY) :
+            House(x, y), ZSprite(l, "destination.png"),
+            initialX(initX), initialY(initY) {
         sprite->setPosition(getCurrentPoint());
     }
 };

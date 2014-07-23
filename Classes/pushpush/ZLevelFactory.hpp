@@ -35,6 +35,7 @@ class ZLevelFactory : public LevelFactory {
     Layer* layer;
     StoryFactory* storyFactory;
     std::function<void()> levelDoneCallback;
+    int initialX, initialY;
     static const int TILE_SIZE = 33;
     static const int TILE_WALL = 49;
     static const int TILE_MOVABLE = 50;
@@ -42,6 +43,11 @@ class ZLevelFactory : public LevelFactory {
     static const char* stageFileNames[];
 
   private:
+    void setInitialPoint(int x, int y) {
+        initialX = x;
+        initialY = y;
+    }
+
     void buildPoints(ZLevelBuilder* builder,
                      LevelBuilder* (ZLevelBuilder::*func)(int, int),
                      TMXTiledMap* const map, const char* layerName) {
@@ -64,13 +70,17 @@ class ZLevelFactory : public LevelFactory {
 
     virtual Level* createLevel(int stage) {
         TMXTiledMap* map = TMXTiledMap::create(stageFileNames[stage]);
-        layer->addChild(map, 0, 100);
+        layer->addChild(map, 0);
 
-        ZObjectFactory* objFactory = new ZObjectFactory(layer);
+        Size s = Director::getInstance()->getWinSize();
+        Size mapSize = map->getMapSize();
+        setInitialPoint(0, s.height - mapSize.height * TILE_SIZE);
+        map->setPosition(initialX, initialY);
+
+        ZObjectFactory* objFactory = new ZObjectFactory(layer,
+                                                        initialX, initialY);
         ZLevelBuilder builder(objFactory);
-
-        Size sz = map->getMapSize();
-        builder.setSize(sz.width, sz.height);
+        builder.setSize(mapSize.width, mapSize.height);
         buildPoints(&builder, &ZLevelBuilder::setHeroPos, map, "SpawnPoint");
         buildPoints(&builder, &ZLevelBuilder::addBall, map, "Balls");
         buildPoints(&builder, &ZLevelBuilder::addHouse, map, "Houses");

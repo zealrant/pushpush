@@ -23,19 +23,28 @@ class ZSprite {
     }
 };
 
-class HeartBeatLayer : public cocos2d::Layer {
+class HeartBeatLayer : public cocos2d::LayerColor {
   private:
     IHeartbeat *beat;
     IKeyListener *keyListener;
     EventListenerKeyboard* listener;
+    EventListenerTouchOneByOne* touchListener;
+    Point touchStartPos;
+
+    static const int KEY_LEFT = 4177;
+    static const int KEY_UP = 4178;
+    static const int KEY_RIGHT = 4179;
+    static const int KEY_DOWN = 4180;
 
   public:
     virtual ~HeartBeatLayer() {
         _eventDispatcher->removeEventListener(listener);
+        _eventDispatcher->removeEventListener(touchListener);
         onStopTimer();
     }
 
     void setupKeyListener(IKeyListener* l) {
+        // key listener
         keyListener = l;
         listener = EventListenerKeyboard::create();
         listener->onKeyPressed = CC_CALLBACK_2(HeartBeatLayer::onKeyPressed,
@@ -44,6 +53,17 @@ class HeartBeatLayer : public cocos2d::Layer {
                                                 this);
         _eventDispatcher->addEventListenerWithSceneGraphPriority(listener,
                                                                  this);
+        touchListener = EventListenerTouchOneByOne::create();
+        touchListener->setSwallowTouches(true);
+        touchListener->onTouchBegan = CC_CALLBACK_2(
+            HeartBeatLayer::onTouchBegan, this);
+        touchListener->onTouchCancelled = CC_CALLBACK_2(
+            HeartBeatLayer::onTouchCancelled, this);
+        touchListener->onTouchEnded = CC_CALLBACK_2(
+            HeartBeatLayer::onTouchEnded, this);
+
+        _eventDispatcher->addEventListenerWithSceneGraphPriority(touchListener,
+                                                                 this);
     }
 
     virtual void onKeyPressed(EventKeyboard::KeyCode keyCode, Event* event) {
@@ -51,6 +71,40 @@ class HeartBeatLayer : public cocos2d::Layer {
     }
 
     virtual void onKeyReleased(EventKeyboard::KeyCode keyCode, Event* event) {
+    }
+
+    virtual bool onTouchBegan(cocos2d::Touch* touch, cocos2d::Event* event) {
+        touchStartPos = touch->getLocation();
+        return true;
+    }
+
+    virtual void onTouchCancelled(cocos2d::Touch* touch, cocos2d::Event* event) {
+    }
+
+    virtual void onTouchEnded(cocos2d::Touch* touch, cocos2d::Event* event) {
+        Point touchEndPos = touch->getLocation();
+        int xDiff = touchStartPos.x - touchEndPos.x;
+        int yDiff = touchStartPos.y - touchEndPos.y;
+        CCLOG("DIFF : %d, %d", xDiff, yDiff);
+        if(abs(xDiff) > 200 && abs(yDiff) > 200) {
+            CCLOG("Too large motion");
+            return;
+        } else if(abs(xDiff) < 80 && abs(yDiff) < 80) {
+            CCLOG("Too small motion");
+            return;
+        } else if(abs(xDiff) > 80) {
+            if(xDiff > 0) {
+                keyListener->onKey(KEY_LEFT);
+            } else {
+                keyListener->onKey(KEY_RIGHT);
+            }
+        } else if(abs(yDiff) > 80) {
+            if(yDiff > 0) {
+                keyListener->onKey(KEY_DOWN);
+            } else {
+                keyListener->onKey(KEY_UP);
+            }
+        }
     }
 
     void setupHeartBeat(IHeartbeat* b) {
@@ -69,7 +123,6 @@ class HeartBeatLayer : public cocos2d::Layer {
     void onStopTimer() {
         this->unschedule(schedule_selector(HeartBeatLayer::LogicTick));
     }
-
 
     CREATE_FUNC(HeartBeatLayer);
 };
