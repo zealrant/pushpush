@@ -2,6 +2,7 @@
 #define __PUSHPUSH_ZLEVEL_FACTORY_HPP__
 
 #include "LevelFactory.hpp"
+#include "ZStory.hpp"
 
 USING_NS_CC;
 
@@ -32,6 +33,8 @@ class ZLevelBuilder : public LevelBuilder {
 
 class ZLevelFactory : public LevelFactory {
     Layer* layer;
+    StoryFactory* storyFactory;
+    std::function<void()> levelDoneCallback;
     static const int TILE_SIZE = 33;
     static const int TILE_WALL = 49;
     static const int TILE_MOVABLE = 50;
@@ -56,7 +59,8 @@ class ZLevelFactory : public LevelFactory {
     }
 
   public:
-    ZLevelFactory(Layer* l) : layer(l) { }
+    ZLevelFactory(Layer* l, StoryFactory* sf, std::function<void()> cb) :
+            layer(l), storyFactory(sf), levelDoneCallback(cb) { }
 
     virtual Level* createLevel(int stage) {
         TMXTiledMap* map = TMXTiledMap::create(stageFileNames[stage]);
@@ -83,12 +87,14 @@ class ZLevelFactory : public LevelFactory {
                 }
                 return t;
             });
+        builder.setStoryFactory(storyFactory);
+        builder.setLevelDoneCallback(levelDoneCallback);
         Level *level = builder.build();
         return level;
     }
 };
 
-const char* ZLevelFactory::stageFileNames[] = {"stage1.tmx", "stage2.tmx"};
+const char* ZLevelFactory::stageFileNames[] = {"stage1.tmx", "stage1.tmx"};
 
 };
 

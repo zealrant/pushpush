@@ -5,6 +5,8 @@
 #include <functional>
 #include "Tiles.hpp"
 #include "Object.hpp"
+#include "Story.hpp"
+#include "Story.hpp"
 
 namespace pushpush {
 
@@ -21,17 +23,33 @@ class IKeyListener {
 class Level {
   private:
     ZSize size;
+    StoryFactory* storyFactory;
+    std::function<void()> levelDoneCallback;
     ZPoint posStart;
     Hero* hero;
     std::vector<House*> houses;
     std::vector<Ball*> balls;
     std::vector<Tile*> tiles;
 
+    bool inputEnabled;
+
+  private:
+    void startInner() {
+        inputEnabled = true;
+    }
+
+    void finishInner() {
+        levelDoneCallback();
+    }
+
   public:
-    Level(ZSize s, ZPoint p, Hero* hero_, std::vector<House*> house,
-          std::vector<Ball*> b, std::vector<Tile*> t)
-            : size(s), posStart(p), hero(hero_), houses(house), balls(b),
-              tiles(t) {
+    Level(ZSize s, StoryFactory* sf, std::function<void()> cb, ZPoint p,
+          Hero* hero_, std::vector<House*> house, std::vector<Ball*> b,
+          std::vector<Tile*> t)
+            : size(s), storyFactory(sf), levelDoneCallback(cb), posStart(p),
+              hero(hero_), houses(house), balls(b), tiles(t),
+              inputEnabled(false) {
+        hero->setMoveCallback(std::bind(&Level::checkFinish, this));
     }
 
     virtual ~Level() {
@@ -42,6 +60,18 @@ class Level {
         Deletor<Ball> deletorBall;
         for_each(balls.begin(), balls.end(), deletorBall);
         delete hero;
+    }
+
+    void start() {
+        Story* story = storyFactory->get(STORY_TYPE::STAGE_INTRO);
+        story->tell(std::bind(&Level::startInner, this));
+    }
+
+
+    void finish() {
+        inputEnabled = false;
+        Story* story = storyFactory->get(STORY_TYPE::STAGE_OUTRO);
+        story->tell(std::bind(&Level::finishInner, this));
     }
 
     Tile* getTileAtPos(int x, int y) {
@@ -58,7 +88,30 @@ class Level {
         return rtn;
     }
 
+    void checkFinish() {
+        bool finishState = true;
+        for(auto b = balls.begin(); b != balls.end(); b++) {
+            bool found = false;
+            for(auto h = houses.begin(); h != houses.end(); h++) {
+                if((*b)->getX() == (*h)->getX() &&
+                   (*b)->getY() == (*h)->getY()) {
+                    found = true;
+                }
+            }
+            if(!found) {
+                finishState = false;
+            }
+        }
+        if(finishState) {
+            finish();
+        }
+    }
+
     virtual void doKeyEvent(DIRECT d) {
+        if(!inputEnabled) {
+            return;
+        }
+
         ZPoint moved;
         hero->getMovePoint(&moved, d, 1);
         if(moved.x < 0 || moved.y < 0
@@ -80,7 +133,7 @@ class Level {
                 return;
             }
             if(moved.x < 0 || moved.y < 0
-               || (size_t)moved.x >= size.width
+               || (size_t) moved.x >= size.width
                || (size_t) moved.y >= size.height) {
                 return;
             }
@@ -92,23 +145,6 @@ class Level {
         }
         hero->move(d);
     }
-
-    virtual bool checkFinish() {
-        bool finishState = true;
-        for(auto b = balls.begin(); b != balls.end(); b++) {
-            bool found = false;
-            for(auto h = houses.begin(); h != houses.end(); h++) {
-                if((*b)->getX() == (*h)->getX() &&
-                   (*b)->getY() == (*h)->getY()) {
-                    found = true;
-                }
-            }
-            if(!found) {
-                finishState = false;
-            }
-        }
-        return finishState;
-    }
 };
 
 class LevelBuilder {
@@ -116,6 +152,8 @@ class LevelBuilder {
     ZSize size;
     ZPoint posStart;
     Hero* hero;
+    StoryFactory* storyFactory;
+    std::function<void()> levelDoneCallback;
     std::vector<House*> houses;
     std::vector<Ball*> balls;
     std::vector<Tile*> tiles;
@@ -145,6 +183,16 @@ class LevelBuilder {
         return this;
     }
 
+    virtual LevelBuilder* setLevelDoneCallback(std::function<void()> cb) {
+        levelDoneCallback = cb;
+        return this;
+    }
+
+    virtual LevelBuilder* setStoryFactory(StoryFactory* sf) {
+        storyFactory = sf;
+        return this;
+    }
+
     virtual LevelBuilder* addBall(Ball* b) {
         balls.push_back(b);
         return this;
@@ -168,7 +216,9 @@ class LevelBuilder {
     }
 
     Level* build() {
-        return new Level(size, posStart, hero, houses, balls, tiles);
+        Level* l = new Level(size, storyFactory, levelDoneCallback, posStart,
+                             hero, houses, balls, tiles);
+        return l;
     }
 };
 

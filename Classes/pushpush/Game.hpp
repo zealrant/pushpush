@@ -3,6 +3,7 @@
 
 #include "ZObjectFactory.hpp"
 #include "ZLevelFactory.hpp"
+#include "ZStory.hpp"
 
 USING_NS_CC;
 
@@ -13,33 +14,46 @@ class Game : public IHeartbeat, public IKeyListener {
     LevelFactory *levelFactory;
     Level* level;
     ZScene* zscene;
+    int levelIndex;
     static const int KEY_LEFT = 4177;
     static const int KEY_UP = 4178;
     static const int KEY_RIGHT = 4179;
     static const int KEY_DOWN = 4180;
+    std::function<void()> levelDoneCallback;
 
   public:
-    Game() : level(NULL) {
+    Game() : level(NULL), levelIndex(0) {
+        levelDoneCallback = std::bind(&Game::doneLevel, this);
     }
 
     void start() {
         Director* pDirector = Director::getInstance();
         zscene = new ZScene(this, this);
-        loadLevel(zscene->getLayer(), 0);
         pDirector->runWithScene(zscene->getScene());
+        level = loadLevel(zscene, levelIndex);
+        level->start();
     }
 
-    void loadLevel(Layer* l, int levelNum) {
-        levelFactory = new ZLevelFactory(l);
-        level = levelFactory->createLevel(levelNum);
+    Level* loadLevel(ZScene* s, int levelIndex) {
+        StoryFactory* sf = new ZStoryFactory(s, levelIndex);
+        levelFactory = new ZLevelFactory(s->getLayer(), sf, levelDoneCallback);
+        return levelFactory->createLevel(levelIndex);
+    }
+
+    virtual void doneLevel() {
+        CCLOG("LevelDone!");
+        levelIndex++;
+        Director* pDirector = Director::getInstance();
+        ZScene* newScene = new ZScene(this, this);
+        auto transition = TransitionFade::create(1.0f, newScene->getScene());
+        pDirector->replaceScene(transition);
+        level = loadLevel(newScene, levelIndex);
+        level->start();
+        delete zscene;
+        zscene = newScene;
     }
 
     virtual void heartbeat() {
-    }
-
-    virtual void checkFinish() {
-        if(level->checkFinish()) {
-        }
     }
 
     virtual void onKey(int keyCode) {
@@ -58,7 +72,6 @@ class Game : public IHeartbeat, public IKeyListener {
                     level->doKeyEvent(DIRECT::LEFT);
                     break;
             }
-            checkFinish();
         } else {
             CCLOG("Level is null");
         }

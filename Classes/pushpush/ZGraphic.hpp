@@ -31,16 +31,19 @@ class HeartBeatLayer : public cocos2d::Layer {
 
   public:
     virtual ~HeartBeatLayer() {
-        _eventDispatcher->removeAllEventListeners();
+        _eventDispatcher->removeEventListener(listener);
         onStopTimer();
     }
 
     void setupKeyListener(IKeyListener* l) {
         keyListener = l;
         listener = EventListenerKeyboard::create();
-        listener->onKeyPressed = CC_CALLBACK_2(HeartBeatLayer::onKeyPressed, this);
-        listener->onKeyReleased = CC_CALLBACK_2(HeartBeatLayer::onKeyReleased, this);
-        _eventDispatcher->addEventListenerWithSceneGraphPriority(listener, this);
+        listener->onKeyPressed = CC_CALLBACK_2(HeartBeatLayer::onKeyPressed,
+                                               this);
+        listener->onKeyReleased = CC_CALLBACK_2(HeartBeatLayer::onKeyReleased,
+                                                this);
+        _eventDispatcher->addEventListenerWithSceneGraphPriority(listener,
+                                                                 this);
     }
 
     virtual void onKeyPressed(EventKeyboard::KeyCode keyCode, Event* event) {

@@ -57,16 +57,15 @@ class ZHero : public Hero, public ZSprite {
 
     virtual bool move(DIRECT d) {
         if(sprite->getNumberOfRunningActions() == 0 && Hero::move(d)) {
-            auto move = MoveTo::create(MoveSpeed, getCurrentPoint());
-            auto done = CallFunc::create(CC_CALLBACK_0(ZHero::moveDone, this));
+            MoveTo* move = MoveTo::create(MoveSpeed, getCurrentPoint());
+            CallFunc* done = NULL;
+            if(moveCallback != NULL) {
+                done = CallFunc::create(moveCallback);
+            }
             auto *seq = Sequence::create(move, done, NULL);
             sprite->runAction(seq);
         }
         return true;
-    }
-
-    void moveDone() {
-        return;
     }
 };
 

@@ -34,9 +34,10 @@ class Movable : public Object {
         p.x = 0;
         p.y = 0;
     }
+    std::function<void ()> moveCallback;
 
   public:
-    Movable(int x, int y) {
+    Movable(int x, int y) : moveCallback(NULL) {
         p.x = x;
         p.y = y;
     }
@@ -75,6 +76,10 @@ class Movable : public Object {
     void setPosition(int x, int y) {
         p.x = x;
         p.y = y;
+    }
+
+    void setMoveCallback(std::function<void ()> cb) {
+        moveCallback = cb;
     }
 };
 
